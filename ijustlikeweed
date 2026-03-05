@@ -565,15 +565,23 @@ local function playLoadAnimation(gui, theme, logoId, titleText, useBlur)
     local logoSize = 92
     local titleFont = Enum.Font.GothamBold
     local titleTextSize = 26
+    local function toEven(value)
+        value = math.floor((tonumber(value) or 0) + 0.5)
+        if value % 2 ~= 0 then
+            value = value + 1
+        end
+        return value
+    end
     local textBounds = TextService:GetTextSize(introTitle, titleTextSize, titleFont, Vector2.new(360, 40))
-    local titleWidth = clamp(textBounds.X + 8, 64, 320)
-    local titleHeight = clamp(textBounds.Y + 2, 20, 34)
-    local splitTravel = math.max(math.floor((logoSize + titleWidth + 24) * 0.28), 48)
+    local titleWidth = toEven(clamp(textBounds.X + 8, 64, 320))
+    local titleHeight = toEven(clamp(textBounds.Y + 2, 20, 34))
+    local logoTextGap = 12
+    local splitTravel = toEven(math.max((logoSize + titleWidth + logoTextGap) * 0.25, 40))
     local intro = create("Frame", {
         Parent = loadRoot,
         AnchorPoint = Vector2.new(0.5, 0.5),
         Position = UDim2.new(0.5, 0, 0.5, 0),
-        Size = UDim2.new(0, logoSize + 14 + titleWidth, 0, math.max(logoSize, titleHeight) + 6),
+        Size = UDim2.new(0, toEven(logoSize + 14 + titleWidth), 0, toEven(math.max(logoSize, titleHeight) + 6)),
         BackgroundTransparency = 1,
         BorderSizePixel = 0,
         ZIndex = 122
@@ -611,7 +619,7 @@ local function playLoadAnimation(gui, theme, logoId, titleText, useBlur)
         TextXAlignment = Enum.TextXAlignment.Left,
         TextYAlignment = Enum.TextYAlignment.Center,
         TextTransparency = 1,
-        ZIndex = 124
+        ZIndex = 123
     })
 
     local function ease(duration)
@@ -664,27 +672,20 @@ local function playLoadAnimation(gui, theme, logoId, titleText, useBlur)
         Position = titleRestPosition,
         TextTransparency = 0
     })
-    hold(0.62)
-
-    tween(logo, ease(0.34), {Position = UDim2.new(0.5, -splitTravel - 3, 0.5, 0)})
-    tween(titleLabel, ease(0.34), {Position = UDim2.new(0.5, splitTravel + 3, 0.5, 0), TextTransparency = 0})
-    hold(0.3)
-    tween(logo, ease(0.32), {Position = logoRestPosition})
-    tween(titleLabel, ease(0.32), {Position = titleRestPosition, TextTransparency = 0})
-    hold(0.26)
+    hold(1.0)
 
     if blurEffect then
-        tween(blurEffect, ease(0.34), {Size = 0})
+        tween(blurEffect, ease(0.42), {Size = 0})
     end
-    tween(logo, ease(0.34), {
+    tween(logo, ease(0.42), {
         ImageTransparency = 1,
-        Position = UDim2.new(0.5, -splitTravel - 14, 0.5, 0)
+        Position = logoRestPosition
     })
-    tween(titleLabel, ease(0.34), {
+    tween(titleLabel, ease(0.42), {
         TextTransparency = 1,
-        Position = UDim2.new(0.5, splitTravel + 14, 0.5, 0)
+        Position = titleRestPosition
     })
-    hold(0.34)
+    hold(0.44)
 
     if blurEffect then
         pcall(function()
